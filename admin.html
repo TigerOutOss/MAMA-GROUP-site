@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MAMA Group — Panneau Administrateur</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#1B2A4A; --ink-soft:#3B4A6B; --gold:#B8863B;
+    --paper:#FAF6EC; --paper-line:#E4DCC8; --charcoal:#2A2723;
+    --sage:#5F7A63; --danger:#A34438; --white:#FFFFFF;
+  }
+  *{box-sizing:border-box;}
+  body{margin:0;background:var(--paper);color:var(--charcoal);font-family:'Inter',sans-serif;}
+  .wrap{max-width:900px;margin:0 auto;padding:48px 20px 80px;}
+  h1{font-family:'Fraunces',serif;color:var(--ink);font-size:28px;margin:0 0 4px;}
+  .sub{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:0.18em;text-transform:uppercase;color:var(--gold);margin-bottom:36px;}
+
+  .gate{background:var(--white);border:1px solid var(--paper-line);border-radius:6px;padding:32px;max-width:420px;}
+  .gate label{display:block;font-size:13px;font-weight:600;color:var(--ink-soft);margin-bottom:8px;}
+  .gate input{
+    width:100%;padding:11px 13px;border:1px solid var(--paper-line);border-radius:3px;
+    font-size:14.5px;margin-bottom:14px;
+  }
+  .gate input:focus{outline:none;border-color:var(--gold);}
+  button{background:var(--ink);color:var(--white);border:none;padding:12px 24px;border-radius:3px;font-size:14px;font-weight:600;cursor:pointer;}
+  button:disabled{opacity:0.5;cursor:not-allowed;}
+  button.secondary{background:none;border:1px solid var(--paper-line);color:var(--ink-soft);font-weight:500;}
+  .status{font-size:13px;margin-top:6px;min-height:16px;}
+  .status.err{color:var(--danger);}
+
+  #panel{display:none;}
+  #panel.show{display:block;}
+  .toolbar{display:flex;justify-content:space-between;align-items:center;margin-bottom:24px;}
+  .count{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--ink-soft);}
+  .card{background:var(--white);border:1px solid var(--paper-line);border-radius:6px;padding:22px;margin-bottom:16px;}
+  .card-head{display:flex;gap:16px;align-items:center;margin-bottom:14px;}
+  .card-head img.avatar{width:56px;height:56px;border-radius:50%;object-fit:cover;border:2px solid var(--paper-line);}
+  .card-head .name{font-family:'Fraunces',serif;font-weight:600;font-size:18px;color:var(--ink);}
+  .card-head .meta{font-size:12px;color:#8A8272;font-family:'JetBrains Mono',monospace;}
+  .grid{display:grid;grid-template-columns:1fr 1fr;gap:10px 24px;font-size:13.5px;margin-bottom:14px;}
+  .grid .k{color:var(--ink-soft);font-weight:600;font-size:11.5px;text-transform:uppercase;letter-spacing:0.04em;}
+  .grid .v{margin-top:2px;}
+  .full{grid-column:1 / -1;}
+  .sig-img{max-width:200px;border:1px solid var(--paper-line);border-radius:4px;margin-top:6px;background:#fff;}
+  details summary{cursor:pointer;font-size:12.5px;color:var(--gold);font-weight:600;}
+  .loading{text-align:center;padding:60px;color:var(--ink-soft);}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>MAMA Group</h1>
+  <div class="sub">Panneau administrateur — candidatures</div>
+
+  <div class="gate" id="gate">
+    <form id="loginForm">
+      <label>Mot de passe administrateur</label>
+      <input type="password" id="password" autocomplete="current-password" required>
+      <button type="submit" id="loginBtn">Se connecter</button>
+      <div class="status" id="loginStatus"></div>
+    </form>
+  </div>
+
+  <div id="panel">
+    <div class="toolbar">
+      <div class="count" id="countLabel"></div>
+      <button class="secondary" id="logoutBtn">Se déconnecter</button>
+    </div>
+    <div id="list"></div>
+  </div>
+</div>
+
+<script>
+let token = sessionStorage.getItem('mama_admin_token') || null;
+
+const loginForm = document.getElementById('loginForm');
+const loginStatus = document.getElementById('loginStatus');
+const loginBtn = document.getElementById('loginBtn');
+
+loginForm.addEventListener('submit', async (e) => {
+  e.preventDefault();
+  loginBtn.disabled = true;
+  loginStatus.textContent = 'Connexion…';
+  loginStatus.className = 'status';
+  const password = document.getElementById('password').value;
+  try {
+    const res = await fetch('/api/admin/login', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({ password })
+    });
+    const data = await res.json();
+    if(!res.ok) throw new Error(data.error || 'Échec de connexion');
+    token = data.token;
+    sessionStorage.setItem('mama_admin_token', token);
+    await enterPanel();
+  } catch(err){
+    loginStatus.textContent = err.message;
+    loginStatus.className = 'status err';
+  } finally {
+    loginBtn.disabled = false;
+  }
+});
+
+document.getElementById('logoutBtn').addEventListener('click', () => {
+  token = null;
+  sessionStorage.removeItem('mama_admin_token');
+  document.getElementById('panel').classList.remove('show');
+  document.getElementById('gate').style.display = 'block';
+  document.getElementById('list').innerHTML = '';
+  document.getElementById('password').value = '';
+});
+
+async function enterPanel(){
+  document.getElementById('gate').style.display = 'none';
+  document.getElementById('panel').classList.add('show');
+  await loadSubmissions();
+}
+
+async function loadSubmissions(){
+  const list = document.getElementById('list');
+  list.innerHTML = '<div class="loading">Chargement…</div>';
+  try {
+    const res = await fetch('/api/admin/candidatures', {
+      headers: { 'Authorization': 'Bearer ' + token }
+    });
+    if(res.status === 401){
+      token = null;
+      sessionStorage.removeItem('mama_admin_token');
+      document.getElementById('panel').classList.remove('show');
+      document.getElementById('gate').style.display = 'block';
+      loginStatus.textContent = 'Session expirée, reconnectez-vous.';
+      loginStatus.className = 'status err';
+      return;
+    }
+    const records = await res.json();
+    if(!res.ok) throw new Error(records.error || 'Erreur serveur');
+
+    document.getElementById('countLabel').textContent = records.length + ' candidature' + (records.length !== 1 ? 's' : '');
+
+    if(records.length === 0){
+      list.innerHTML = '<div class="loading">Aucune candidature pour le moment.</div>';
+      return;
+    }
+
+    list.innerHTML = records.map(r => `
+      <div class="card">
+        <div class="card-head">
+          ${r.photo ? `<img class="avatar" src="${r.photo}">` : ''}
+          <div>
+            <div class="name">${escapeHtml(r.nom_complet || 'Sans nom')}</div>
+            <div class="meta">${new Date(r.submitted_at).toLocaleString('fr-FR')} — Réf. #${r.id}</div>
+          </div>
+        </div>
+        <div class="grid">
+          <div><div class="k">Date de naissance</div><div class="v">${escapeHtml(r.dob||'—')}</div></div>
+          <div><div class="k">Téléphone</div><div class="v">${escapeHtml(r.tel||'—')}</div></div>
+          <div><div class="k">Ville</div><div class="v">${escapeHtml(r.ville||'—')}</div></div>
+          <div><div class="k">E-mail</div><div class="v">${escapeHtml(r.email||'—')}</div></div>
+          <div><div class="k">Adresse</div><div class="v">${escapeHtml(r.adresse||'—')}</div></div>
+          <div><div class="k">Heures / semaine</div><div class="v">${escapeHtml(r.heures_semaine||'—')}</div></div>
+          <div><div class="k">Expérience vente / marketing</div><div class="v">${escapeHtml(r.experience||'—')}</div></div>
+          <div class="full"><div class="k">Pourquoi MAMA Group ?</div><div class="v">${escapeHtml(r.pourquoi||'—')}</div></div>
+          <div class="full"><div class="k">Objectifs personnels et financiers</div><div class="v">${escapeHtml(r.objectifs||'—')}</div></div>
+        </div>
+        <details>
+          <summary>Voir la signature</summary>
+          ${r.signature ? `<img class="sig-img" src="${r.signature}">` : '<p style="font-size:12px;color:#8A8272;">Aucune signature</p>'}
+        </details>
+      </div>
+    `).join('');
+  } catch(err){
+    list.innerHTML = '<div class="loading">Erreur : ' + escapeHtml(err.message) + '</div>';
+  }
+}
+
+function escapeHtml(str){
+  const div = document.createElement('div');
+  div.textContent = str;
+  return div.innerHTML;
+}
+
+// Reprend la session si un token valide existe déjà
+if(token){ enterPanel(); }
+</script>
+</body>
+</html>

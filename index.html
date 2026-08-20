@@ -1,0 +1,894 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MAMA Group — Formulaire d'Intégration</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#1B2A4A;
+    --ink-soft:#3B4A6B;
+    --gold:#B8863B;
+    --gold-light:#E4C98A;
+    --paper:#FAF6EC;
+    --paper-line:#E4DCC8;
+    --charcoal:#2A2723;
+    --sage:#5F7A63;
+    --danger:#A34438;
+    --white:#FFFFFF;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    background:var(--paper);
+    background-image:
+      linear-gradient(var(--paper-line) 1px, transparent 1px);
+    background-size: 100% 42px;
+    color:var(--charcoal);
+    font-family:'Inter', sans-serif;
+    -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:720px;margin:0 auto;padding:0 20px 80px;}
+
+  /* Letterhead */
+  header.letterhead{
+    padding:56px 0 28px;
+    text-align:center;
+    border-bottom:3px double var(--ink);
+    margin-bottom:36px;
+  }
+  .crest{
+    width:56px;height:56px;margin:0 auto 18px;
+    border:2px solid var(--gold);
+    border-radius:50%;
+    display:flex;align-items:center;justify-content:center;
+    font-family:'Fraunces',serif;font-weight:700;font-size:22px;
+    color:var(--gold);
+    position:relative;
+  }
+  .crest::before,.crest::after{
+    content:'';position:absolute;width:6px;height:6px;border-radius:50%;
+    background:var(--gold);top:50%;transform:translateY(-50%);
+  }
+  .crest::before{left:-14px;}
+  .crest::after{right:-14px;}
+  h1.brand{
+    font-family:'Fraunces',serif;
+    font-weight:700;
+    font-size:clamp(28px,5vw,40px);
+    letter-spacing:0.02em;
+    margin:0 0 6px;
+    color:var(--ink);
+  }
+  .sub{
+    font-family:'JetBrains Mono',monospace;
+    font-size:11px;
+    letter-spacing:0.22em;
+    text-transform:uppercase;
+    color:var(--gold);
+  }
+
+  /* Sections */
+  .section{margin-bottom:44px;}
+  .section-head{
+    display:flex;align-items:baseline;gap:12px;
+    margin-bottom:20px;
+  }
+  .section-num{
+    font-family:'JetBrains Mono',monospace;
+    font-size:12px;color:var(--gold);
+    border:1px solid var(--gold);
+    border-radius:50%;
+    width:24px;height:24px;
+    display:flex;align-items:center;justify-content:center;
+    flex-shrink:0;
+  }
+  .section-title{
+    font-family:'Fraunces',serif;
+    font-weight:600;
+    font-size:20px;
+    color:var(--ink);
+    margin:0;
+  }
+  .section-body{
+    padding-left:36px;
+    border-left:1px solid var(--paper-line);
+  }
+
+  /* Fields */
+  .field{margin-bottom:20px;}
+  label{
+    display:block;
+    font-size:13px;
+    font-weight:600;
+    color:var(--ink-soft);
+    margin-bottom:7px;
+  }
+  label .req{color:var(--danger);}
+  input[type=text], input[type=tel], input[type=email], input[type=date], input[type=number], textarea{
+    width:100%;
+    padding:11px 13px;
+    border:1px solid var(--paper-line);
+    border-radius:3px;
+    background:var(--white);
+    font-family:'Inter',sans-serif;
+    font-size:14.5px;
+    color:var(--charcoal);
+    transition:border-color .15s ease, box-shadow .15s ease;
+  }
+  textarea{resize:vertical;min-height:74px;}
+  input:focus, textarea:focus{
+    outline:none;
+    border-color:var(--gold);
+    box-shadow:0 0 0 3px rgba(184,134,59,0.15);
+  }
+  .hint{font-size:12px;color:#8A8272;margin-top:6px;}
+  .row2{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+  @media (max-width:560px){ .row2{grid-template-columns:1fr;} .section-body{padding-left:0;border-left:none;} }
+
+  /* Photo upload */
+  .photo-zone{
+    display:flex;align-items:center;gap:18px;
+  }
+  .photo-preview{
+    width:96px;height:96px;
+    border-radius:50%;
+    border:2px dashed var(--paper-line);
+    background:var(--white);
+    display:flex;align-items:center;justify-content:center;
+    overflow:hidden;flex-shrink:0;
+    color:#B7AF9C;font-size:11px;text-align:center;
+  }
+  .photo-preview img{width:100%;height:100%;object-fit:cover;}
+  .btn-upload{
+    border:1px solid var(--ink);
+    background:var(--white);
+    color:var(--ink);
+    padding:10px 16px;
+    border-radius:3px;
+    font-size:13px;font-weight:600;
+    cursor:pointer;
+  }
+  .btn-upload:hover{background:var(--ink);color:var(--white);}
+  input[type=file]{display:none;}
+
+  /* Radio pills for oui/non */
+  .pill-group{display:flex;gap:10px;}
+  .pill{
+    flex:1;
+    text-align:center;
+    padding:11px;
+    border:1px solid var(--paper-line);
+    border-radius:3px;
+    cursor:pointer;
+    font-size:14px;font-weight:500;
+    background:var(--white);
+    transition:all .15s ease;
+  }
+  .pill input{display:none;}
+  .pill.active{
+    border-color:var(--sage);
+    background:rgba(95,122,99,0.09);
+    color:var(--sage);
+    font-weight:600;
+  }
+
+  /* Principes list */
+  .principes{list-style:none;padding:0;margin:0;}
+  .principes li{
+    display:flex;align-items:flex-start;gap:12px;
+    padding:11px 0;
+    border-bottom:1px solid var(--paper-line);
+    font-size:14.5px;
+  }
+  .principes li:last-child{border-bottom:none;}
+  .principes .mark{
+    font-family:'Fraunces',serif;
+    color:var(--gold);
+    font-weight:700;
+  }
+
+  /* Checkbox rows (engagement) */
+  .check-row{
+    display:flex;align-items:flex-start;gap:12px;
+    padding:14px 0;
+    border-bottom:1px solid var(--paper-line);
+    cursor:pointer;
+  }
+  .check-row:last-child{border-bottom:none;}
+  .checkbox{
+    width:20px;height:20px;flex-shrink:0;margin-top:1px;
+    border:1.5px solid var(--ink);
+    border-radius:2px;
+    display:flex;align-items:center;justify-content:center;
+    background:var(--white);
+    transition:all .15s ease;
+  }
+  .checkbox.checked{background:var(--ink);}
+  .checkbox svg{width:12px;height:12px;stroke:var(--white);opacity:0;transition:opacity .1s;}
+  .checkbox.checked svg{opacity:1;}
+  .check-row span.txt{font-size:14px;line-height:1.5;}
+  input.hidden-checkbox{display:none;}
+
+  /* Signature */
+  .sig-wrap{
+    border:1px solid var(--paper-line);
+    border-radius:4px;
+    background:var(--white);
+    background-image: repeating-linear-gradient(transparent, transparent 39px, var(--paper-line) 40px);
+  }
+  canvas#sigpad{
+    width:100%;height:160px;display:block;touch-action:none;cursor:crosshair;
+  }
+  .sig-controls{
+    display:flex;justify-content:space-between;align-items:center;
+    padding:8px 4px 0;
+  }
+  .sig-controls button{
+    background:none;border:none;color:var(--ink-soft);
+    font-size:12.5px;font-weight:600;cursor:pointer;
+    text-decoration:underline;padding:4px;
+  }
+  .sig-empty-note{font-size:11px;color:#B7AF9C;}
+
+  /* Submit */
+  .submit-zone{
+    text-align:center;
+    padding-top:20px;
+    display:flex;gap:14px;justify-content:center;flex-wrap:wrap;
+  }
+  .btn-preview{
+    background:var(--white);
+    color:var(--ink);
+    border:1px solid var(--ink);
+    padding:16px 30px;
+    font-size:15px;font-weight:600;
+    border-radius:3px;
+    cursor:pointer;
+  }
+  .btn-preview:hover{background:rgba(27,42,74,0.06);}
+  button#submitBtn{
+    background:var(--ink);
+    color:var(--white);
+    border:none;
+    padding:16px 44px;
+    font-size:15px;font-weight:600;
+    border-radius:3px;
+    cursor:pointer;
+    letter-spacing:0.02em;
+    box-shadow:0 4px 14px rgba(27,42,74,0.25);
+    transition:transform .12s ease, box-shadow .12s ease;
+  }
+  button#submitBtn:hover{transform:translateY(-1px);box-shadow:0 6px 18px rgba(27,42,74,0.32);}
+  button#submitBtn:disabled{opacity:0.5;cursor:not-allowed;transform:none;}
+  .err{color:var(--danger);font-size:12.5px;margin-top:6px;display:none;}
+  .err.show{display:block;}
+  input.invalid, textarea.invalid{border-color:var(--danger);}
+
+  /* Confirmation */
+  .confirm{
+    display:none;
+    text-align:center;
+    padding:64px 20px;
+  }
+  .confirm.show{display:block;}
+  .seal{
+    width:80px;height:80px;border-radius:50%;
+    border:2.5px solid var(--sage);
+    display:flex;align-items:center;justify-content:center;
+    margin:0 auto 22px;
+  }
+  .seal svg{width:34px;height:34px;stroke:var(--sage);}
+  .confirm h2{font-family:'Fraunces',serif;color:var(--ink);margin-bottom:10px;}
+  .confirm p{color:var(--ink-soft);font-size:14.5px;max-width:400px;margin:0 auto;}
+  .ref{
+    display:inline-block;margin-top:20px;
+    font-family:'JetBrains Mono',monospace;font-size:12px;
+    background:var(--white);border:1px solid var(--paper-line);
+    padding:8px 14px;border-radius:3px;color:var(--ink-soft);
+  }
+  .confirm-actions{margin-top:28px;}
+  #downloadPdfBtn{
+    background:var(--gold);color:var(--white);border:none;
+    padding:14px 30px;font-size:14.5px;font-weight:600;
+    border-radius:3px;cursor:pointer;
+  }
+  #downloadPdfBtn:hover{opacity:0.92;}
+
+  /* Preview modal */
+  .modal-backdrop{
+    display:none;position:fixed;inset:0;background:rgba(27,42,74,0.55);
+    z-index:100;align-items:center;justify-content:center;padding:20px;
+  }
+  .modal-backdrop.show{display:flex;}
+  .modal{
+    background:var(--paper);border-radius:6px;max-width:640px;width:100%;
+    max-height:85vh;display:flex;flex-direction:column;
+    box-shadow:0 20px 60px rgba(0,0,0,0.3);
+  }
+  .modal-head{
+    display:flex;justify-content:space-between;align-items:center;
+    padding:20px 24px;border-bottom:1px solid var(--paper-line);
+  }
+  .modal-head h2{font-family:'Fraunces',serif;color:var(--ink);font-size:20px;margin:0;}
+  .modal-close{
+    background:none;border:none;color:var(--ink-soft);font-size:13px;
+    cursor:pointer;text-decoration:underline;
+  }
+  .modal-body{padding:24px;overflow-y:auto;}
+  .modal-foot{
+    padding:16px 24px;border-top:1px solid var(--paper-line);
+    display:flex;justify-content:flex-end;gap:12px;
+  }
+  .preview-row{display:grid;grid-template-columns:180px 1fr;gap:8px;padding:9px 0;border-bottom:1px solid var(--paper-line);font-size:14px;}
+  .preview-row .pk{color:var(--ink-soft);font-weight:600;font-size:12px;text-transform:uppercase;letter-spacing:0.03em;}
+  .preview-row .pv{white-space:pre-wrap;}
+  .preview-photo{width:80px;height:80px;border-radius:50%;object-fit:cover;border:2px solid var(--paper-line);margin-bottom:16px;}
+  .preview-sig{max-width:220px;border:1px solid var(--paper-line);border-radius:4px;background:#fff;margin-top:4px;}
+  #formBody.hidden{display:none;}
+
+  footer{
+    text-align:center;font-size:11px;color:#B7AF9C;
+    margin-top:40px;font-family:'JetBrains Mono',monospace;
+    letter-spacing:0.05em;
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="letterhead">
+    <div class="crest">M</div>
+    <h1 class="brand">MAMA Group</h1>
+    <div class="sub">Formulaire officiel d'intégration</div>
+  </header>
+
+  <div id="formBody">
+    <form id="mamaForm" novalidate>
+
+      <!-- Photo -->
+      <div class="section">
+        <div class="section-head"><span class="section-num">•</span><h2 class="section-title">Photo du candidat</h2></div>
+        <div class="section-body">
+          <div class="photo-zone">
+            <div class="photo-preview" id="photoPreview">Aucune<br>photo</div>
+            <div>
+              <button type="button" class="btn-upload" id="photoBtn">Choisir une photo</button>
+              <input type="file" id="photoInput" accept="image/*">
+              <div class="hint">JPG ou PNG, sera enregistrée avec la candidature.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Infos personnelles -->
+      <div class="section">
+        <div class="section-head"><span class="section-num">1</span><h2 class="section-title">Informations personnelles</h2></div>
+        <div class="section-body">
+          <div class="field">
+            <label>Nom complet <span class="req">*</span></label>
+            <input type="text" id="nomComplet" required>
+            <div class="err">Ce champ est requis.</div>
+          </div>
+          <div class="row2">
+            <div class="field">
+              <label>Date de naissance <span class="req">*</span></label>
+              <input type="date" id="dob" required>
+              <div class="err">Ce champ est requis.</div>
+            </div>
+            <div class="field">
+              <label>Téléphone <span class="req">*</span></label>
+              <input type="tel" id="tel" placeholder="+509 ..." required>
+              <div class="err">Ce champ est requis.</div>
+            </div>
+          </div>
+          <div class="field">
+            <label>Adresse</label>
+            <input type="text" id="adresse">
+          </div>
+          <div class="row2">
+            <div class="field">
+              <label>Ville <span class="req">*</span></label>
+              <input type="text" id="ville" required>
+              <div class="err">Ce champ est requis.</div>
+            </div>
+            <div class="field">
+              <label>E-mail</label>
+              <input type="email" id="email">
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Profil -->
+      <div class="section">
+        <div class="section-head"><span class="section-num">2</span><h2 class="section-title">Profil du candidat</h2></div>
+        <div class="section-body">
+          <div class="field">
+            <label>Pourquoi souhaitez-vous intégrer MAMA Group ? <span class="req">*</span></label>
+            <textarea id="pourquoi" required></textarea>
+            <div class="err">Ce champ est requis.</div>
+          </div>
+          <div class="field">
+            <label>Quels sont vos objectifs personnels et financiers ? <span class="req">*</span></label>
+            <textarea id="objectifs" required></textarea>
+            <div class="err">Ce champ est requis.</div>
+          </div>
+          <div class="field">
+            <label>Avez-vous une expérience dans la vente, le marketing ou l'entrepreneuriat ? <span class="req">*</span></label>
+            <div class="pill-group" id="experiencePills">
+              <label class="pill" data-val="Oui"><input type="radio" name="experience" value="Oui"> Oui</label>
+              <label class="pill" data-val="Non"><input type="radio" name="experience" value="Non"> Non</label>
+            </div>
+            <div class="err" id="expErr">Veuillez choisir une option.</div>
+          </div>
+          <div class="field">
+            <label>Combien d'heures par semaine pouvez-vous consacrer à cette activité ? <span class="req">*</span></label>
+            <input type="number" id="heures" min="0" max="168" required>
+            <div class="err">Ce champ est requis.</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Principes -->
+      <div class="section">
+        <div class="section-head"><span class="section-num">3</span><h2 class="section-title">Principes fondamentaux de MAMA Group</h2></div>
+        <div class="section-body">
+          <ul class="principes">
+            <li><span class="mark">—</span> Intégrité et honnêteté</li>
+            <li><span class="mark">—</span> Respect et professionnalisme</li>
+            <li><span class="mark">—</span> Esprit d'équipe et collaboration</li>
+            <li><span class="mark">—</span> Discipline et engagement</li>
+            <li><span class="mark">—</span> Leadership positif</li>
+            <li><span class="mark">—</span> Développement personnel continu</li>
+            <li><span class="mark">—</span> Contribution au développement économique et social</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Engagement -->
+      <div class="section">
+        <div class="section-head"><span class="section-num">4</span><h2 class="section-title">Engagement du candidat</h2></div>
+        <div class="section-body">
+          <div id="engagementList">
+            <label class="check-row">
+              <input type="checkbox" class="hidden-checkbox" data-eng="0">
+              <span class="checkbox"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg></span>
+              <span class="txt">J'accepte de respecter les principes et les valeurs de MAMA Group.</span>
+            </label>
+            <label class="check-row">
+              <input type="checkbox" class="hidden-checkbox" data-eng="1">
+              <span class="checkbox"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg></span>
+              <span class="txt">Je m'engage à représenter l'organisation avec professionnalisme.</span>
+            </label>
+            <label class="check-row">
+              <input type="checkbox" class="hidden-checkbox" data-eng="2">
+              <span class="checkbox"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg></span>
+              <span class="txt">Je certifie que les informations fournies sont exactes.</span>
+            </label>
+          </div>
+          <div class="err" id="engErr">Les trois engagements doivent être acceptés.</div>
+        </div>
+      </div>
+
+      <!-- Signature -->
+      <div class="section">
+        <div class="section-head"><span class="section-num">5</span><h2 class="section-title">Validation</h2></div>
+        <div class="section-body">
+          <div class="field">
+            <label>Signature électronique <span class="req">*</span></label>
+            <div class="sig-wrap">
+              <canvas id="sigpad"></canvas>
+            </div>
+            <div class="sig-controls">
+              <span class="sig-empty-note">Signez avec la souris ou le doigt</span>
+              <button type="button" id="clearSig">Effacer</button>
+            </div>
+            <div class="err" id="sigErr">Une signature est requise.</div>
+          </div>
+          <div class="field">
+            <label>Date <span class="req">*</span></label>
+            <input type="date" id="dateSignature" required>
+          </div>
+        </div>
+      </div>
+
+      <div class="submit-zone">
+        <button type="button" class="btn-preview" id="previewBtn">Aperçu de ma candidature</button>
+        <button type="submit" id="submitBtn">Soumettre ma candidature</button>
+      </div>
+    </form>
+  </div>
+
+  <!-- Preview modal -->
+  <div class="modal-backdrop" id="previewModal">
+    <div class="modal">
+      <div class="modal-head">
+        <h2>Aperçu de votre candidature</h2>
+        <button type="button" class="modal-close" id="closePreview">Fermer</button>
+      </div>
+      <div class="modal-body" id="previewBody"></div>
+      <div class="modal-foot">
+        <button type="button" class="btn-upload" id="editFromPreview">Modifier</button>
+        <button type="button" id="confirmFromPreview">Confirmer et envoyer</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="confirm" id="confirmZone">
+    <div class="seal"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg></div>
+    <h2>Candidature enregistrée</h2>
+    <p>Votre formulaire a bien été reçu et sauvegardé. L'équipe MAMA Group vous contactera prochainement.</p>
+    <div class="ref" id="refCode"></div>
+    <div class="confirm-actions">
+      <button type="button" id="downloadPdfBtn">Télécharger ma copie (PDF)</button>
+    </div>
+  </div>
+
+  <footer>MAMA GROUP — DOCUMENT OFFICIEL D'INTÉGRATION</footer>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script>
+(function(){
+  // ---------- Photo upload ----------
+  const photoBtn = document.getElementById('photoBtn');
+  const photoInput = document.getElementById('photoInput');
+  const photoPreview = document.getElementById('photoPreview');
+  let photoDataUrl = null;
+
+  photoBtn.addEventListener('click', () => photoInput.click());
+  photoInput.addEventListener('change', (e) => {
+    const file = e.target.files[0];
+    if(!file) return;
+    const reader = new FileReader();
+    reader.onload = (ev) => {
+      const img = new Image();
+      img.onload = () => {
+        // Redimensionne et compresse pour rester léger (photos de téléphone souvent 3-8 Mo)
+        const maxDim = 500;
+        let w = img.width, h = img.height;
+        if(w > h && w > maxDim){ h = Math.round(h * maxDim / w); w = maxDim; }
+        else if(h > maxDim){ w = Math.round(w * maxDim / h); h = maxDim; }
+        const canvas = document.createElement('canvas');
+        canvas.width = w; canvas.height = h;
+        canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+        photoDataUrl = canvas.toDataURL('image/jpeg', 0.82);
+        photoPreview.innerHTML = '<img src="'+photoDataUrl+'" alt="Photo du candidat">';
+      };
+      img.onerror = () => {
+        alert("Cette image n'a pas pu être lue. Merci d'essayer un autre fichier.");
+      };
+      img.src = ev.target.result;
+    };
+    reader.readAsDataURL(file);
+  });
+
+  // ---------- Experience pills ----------
+  const pills = document.querySelectorAll('#experiencePills .pill');
+  let experienceVal = null;
+  pills.forEach(p => {
+    p.addEventListener('click', () => {
+      pills.forEach(x => x.classList.remove('active'));
+      p.classList.add('active');
+      experienceVal = p.dataset.val;
+      document.getElementById('expErr').classList.remove('show');
+    });
+  });
+
+  // ---------- Engagement checkboxes ----------
+  const engRows = document.querySelectorAll('#engagementList .check-row');
+  engRows.forEach(row => {
+    const input = row.querySelector('.hidden-checkbox');
+    const box = row.querySelector('.checkbox');
+    row.addEventListener('click', () => {
+      input.checked = !input.checked;
+      box.classList.toggle('checked', input.checked);
+      if(allEngagementsChecked()) document.getElementById('engErr').classList.remove('show');
+    });
+  });
+  function allEngagementsChecked(){
+    return Array.from(document.querySelectorAll('.hidden-checkbox')).every(c => c.checked);
+  }
+
+  // ---------- Signature pad ----------
+  const canvas = document.getElementById('sigpad');
+  const ctx = canvas.getContext('2d');
+  let drawing = false, hasSignature = false;
+
+  function resizeCanvas(){
+    const ratio = window.devicePixelRatio || 1;
+    const rect = canvas.getBoundingClientRect();
+    const prevData = hasSignature ? canvas.toDataURL() : null;
+    canvas.width = rect.width * ratio;
+    canvas.height = rect.height * ratio;
+    ctx.scale(ratio, ratio);
+    ctx.lineWidth = 2.2;
+    ctx.lineCap = 'round';
+    ctx.strokeStyle = '#1B2A4A';
+    if(prevData){
+      const img = new Image();
+      img.onload = () => ctx.drawImage(img, 0, 0, rect.width, rect.height);
+      img.src = prevData;
+    }
+  }
+  window.addEventListener('resize', resizeCanvas);
+  setTimeout(resizeCanvas, 50);
+
+  function getPos(e){
+    const rect = canvas.getBoundingClientRect();
+    if(e.touches && e.touches[0]){
+      return {x: e.touches[0].clientX - rect.left, y: e.touches[0].clientY - rect.top};
+    }
+    return {x: e.clientX - rect.left, y: e.clientY - rect.top};
+  }
+  function start(e){
+    drawing = true; hasSignature = true;
+    const p = getPos(e);
+    ctx.beginPath();
+    ctx.moveTo(p.x, p.y);
+    e.preventDefault();
+  }
+  function move(e){
+    if(!drawing) return;
+    const p = getPos(e);
+    ctx.lineTo(p.x, p.y);
+    ctx.stroke();
+    document.getElementById('sigErr').classList.remove('show');
+    e.preventDefault();
+  }
+  function end(){ drawing = false; }
+
+  canvas.addEventListener('mousedown', start);
+  canvas.addEventListener('mousemove', move);
+  window.addEventListener('mouseup', end);
+  canvas.addEventListener('touchstart', start, {passive:false});
+  canvas.addEventListener('touchmove', move, {passive:false});
+  canvas.addEventListener('touchend', end);
+
+  document.getElementById('clearSig').addEventListener('click', () => {
+    ctx.clearRect(0,0,canvas.width,canvas.height);
+    hasSignature = false;
+  });
+
+  // ---------- Validation + submit ----------
+  const form = document.getElementById('mamaForm');
+  const requiredTextFields = ['nomComplet','dob','tel','ville','pourquoi','objectifs','heures','dateSignature'];
+  let lastSubmittedRecord = null;
+  let lastSubmittedId = null;
+
+  function validateForm(){
+    let valid = true;
+    requiredTextFields.forEach(id => {
+      const el = document.getElementById(id);
+      if(!el.value.trim()){
+        el.classList.add('invalid');
+        el.nextElementSibling && el.nextElementSibling.classList.add('show');
+        valid = false;
+      } else {
+        el.classList.remove('invalid');
+        el.nextElementSibling && el.nextElementSibling.classList.remove('show');
+      }
+    });
+    if(!experienceVal){
+      document.getElementById('expErr').classList.add('show');
+      valid = false;
+    }
+    if(!allEngagementsChecked()){
+      document.getElementById('engErr').classList.add('show');
+      valid = false;
+    }
+    if(!hasSignature){
+      document.getElementById('sigErr').classList.add('show');
+      valid = false;
+    }
+    if(!valid){
+      const firstInvalid = form.querySelector('.invalid, .err.show');
+      if(firstInvalid) firstInvalid.scrollIntoView({behavior:'smooth', block:'center'});
+    }
+    return valid;
+  }
+
+  function collectRecord(){
+    return {
+      photo: photoDataUrl,
+      nomComplet: document.getElementById('nomComplet').value.trim(),
+      dob: document.getElementById('dob').value,
+      tel: document.getElementById('tel').value.trim(),
+      adresse: document.getElementById('adresse').value.trim(),
+      ville: document.getElementById('ville').value.trim(),
+      email: document.getElementById('email').value.trim(),
+      pourquoi: document.getElementById('pourquoi').value.trim(),
+      objectifs: document.getElementById('objectifs').value.trim(),
+      experience: experienceVal,
+      heuresParSemaine: document.getElementById('heures').value,
+      signature: canvas.toDataURL(),
+      dateSignature: document.getElementById('dateSignature').value
+    };
+  }
+
+  async function submitRecord(record){
+    const response = await fetch('/api/candidatures', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(record)
+    });
+    const data = await response.json();
+    if(!response.ok){
+      throw new Error(data.error || 'Erreur serveur');
+    }
+    return data;
+  }
+
+  function showConfirmation(record, id){
+    lastSubmittedRecord = record;
+    lastSubmittedId = id;
+    document.getElementById('formBody').classList.add('hidden');
+    document.getElementById('confirmZone').classList.add('show');
+    document.getElementById('refCode').textContent = 'Référence : #' + id;
+  }
+
+  // ---------- Aperçu ----------
+  const previewModal = document.getElementById('previewModal');
+  const previewBody = document.getElementById('previewBody');
+
+  function renderPreview(record){
+    const rows = [
+      ['Nom complet', record.nomComplet],
+      ['Date de naissance', record.dob],
+      ['Téléphone', record.tel],
+      ['Adresse', record.adresse || '—'],
+      ['Ville', record.ville],
+      ['E-mail', record.email || '—'],
+      ['Expérience vente/marketing', record.experience],
+      ['Heures par semaine', record.heuresParSemaine],
+    ];
+    let html = '';
+    if(record.photo){
+      html += `<img class="preview-photo" src="${record.photo}">`;
+    }
+    html += rows.map(([k,v]) => `<div class="preview-row"><div class="pk">${k}</div><div class="pv">${escapeHtml(v)}</div></div>`).join('');
+    html += `<div class="preview-row"><div class="pk">Pourquoi MAMA Group ?</div><div class="pv">${escapeHtml(record.pourquoi)}</div></div>`;
+    html += `<div class="preview-row"><div class="pk">Objectifs</div><div class="pv">${escapeHtml(record.objectifs)}</div></div>`;
+    html += `<div class="preview-row"><div class="pk">Date de signature</div><div class="pv">${escapeHtml(record.dateSignature)}</div></div>`;
+    html += `<div class="preview-row"><div class="pk">Signature</div><div class="pv"><img class="preview-sig" src="${record.signature}"></div></div>`;
+    previewBody.innerHTML = html;
+  }
+
+  function escapeHtml(str){
+    const div = document.createElement('div');
+    div.textContent = str == null ? '' : String(str);
+    return div.innerHTML;
+  }
+
+  document.getElementById('previewBtn').addEventListener('click', () => {
+    if(!validateForm()) return;
+    renderPreview(collectRecord());
+    previewModal.classList.add('show');
+  });
+  document.getElementById('closePreview').addEventListener('click', () => previewModal.classList.remove('show'));
+  document.getElementById('editFromPreview').addEventListener('click', () => previewModal.classList.remove('show'));
+
+  document.getElementById('confirmFromPreview').addEventListener('click', async () => {
+    const btn = document.getElementById('confirmFromPreview');
+    btn.disabled = true;
+    btn.textContent = 'Enregistrement…';
+    try {
+      const record = collectRecord();
+      const data = await submitRecord(record);
+      previewModal.classList.remove('show');
+      showConfirmation(record, data.id);
+    } catch(err){
+      console.error('Erreur de soumission MAMA Group:', err);
+      alert("Une erreur est survenue lors de l'enregistrement : " + (err && err.message ? err.message : 'erreur inconnue') + ". Merci de réessayer.");
+    } finally {
+      btn.disabled = false;
+      btn.textContent = 'Confirmer et envoyer';
+    }
+  });
+
+  // ---------- Génération du PDF (copie pour le candidat) ----------
+  function generatePdf(record, id){
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF({ unit: 'pt', format: 'a4' });
+    const marginX = 48;
+    let y = 56;
+    const pageWidth = doc.internal.pageSize.getWidth();
+
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(18);
+    doc.setTextColor(27, 42, 74);
+    doc.text('MAMA GROUP', marginX, y);
+    doc.setFontSize(10.5);
+    doc.setTextColor(184, 134, 59);
+    doc.text("CONFIRMATION DE CANDIDATURE", marginX, y + 16);
+    doc.setDrawColor(27, 42, 74);
+    doc.setLineWidth(1);
+    y += 30;
+    doc.line(marginX, y, pageWidth - marginX, y);
+    y += 28;
+
+    if(record.photo){
+      try { doc.addImage(record.photo, 'JPEG', pageWidth - marginX - 70, 56, 70, 70); } catch(e){}
+    }
+
+    doc.setTextColor(42, 39, 35);
+    const field = (label, value) => {
+      doc.setFont('helvetica', 'bold');
+      doc.setFontSize(9);
+      doc.setTextColor(59, 74, 107);
+      doc.text(label.toUpperCase(), marginX, y);
+      y += 13;
+      doc.setFont('helvetica', 'normal');
+      doc.setFontSize(11.5);
+      doc.setTextColor(42, 39, 35);
+      const lines = doc.splitTextToSize(String(value || '—'), pageWidth - marginX*2 - 80);
+      doc.text(lines, marginX, y);
+      y += lines.length * 14 + 12;
+    };
+
+    field('Nom complet', record.nomComplet);
+    field('Date de naissance', record.dob);
+    field('Téléphone', record.tel);
+    field('Ville', record.ville);
+    field('Adresse', record.adresse);
+    field('E-mail', record.email);
+    field('Expérience vente / marketing', record.experience);
+    field('Heures disponibles par semaine', record.heuresParSemaine);
+    field('Pourquoi intégrer MAMA Group ?', record.pourquoi);
+    field('Objectifs personnels et financiers', record.objectifs);
+
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(9);
+    doc.setTextColor(59, 74, 107);
+    doc.text('SIGNATURE', marginX, y);
+    y += 10;
+    try { doc.addImage(record.signature, 'PNG', marginX, y, 160, 60); } catch(e){}
+    y += 74;
+    doc.setFont('helvetica', 'normal');
+    doc.setFontSize(10.5);
+    doc.setTextColor(42, 39, 35);
+    doc.text('Signé le ' + (record.dateSignature || '—'), marginX, y);
+
+    y += 40;
+    doc.setDrawColor(228, 220, 200);
+    doc.line(marginX, y, pageWidth - marginX, y);
+    y += 20;
+    doc.setFontSize(9);
+    doc.setTextColor(138, 130, 114);
+    doc.text('Référence : #' + id, marginX, y);
+    doc.text('Reçu le ' + new Date().toLocaleString('fr-FR'), marginX, y + 13);
+
+    doc.save('MAMA-Group-candidature-' + id + '.pdf');
+  }
+
+  document.getElementById('downloadPdfBtn').addEventListener('click', () => {
+    if(!lastSubmittedRecord) return;
+    generatePdf(lastSubmittedRecord, lastSubmittedId);
+  });
+
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    if(!validateForm()) return;
+
+    const submitBtn = document.getElementById('submitBtn');
+    submitBtn.disabled = true;
+    submitBtn.textContent = 'Enregistrement…';
+
+    const record = collectRecord();
+    try {
+      const data = await submitRecord(record);
+      showConfirmation(record, data.id);
+    } catch(err){
+      console.error('Erreur de soumission MAMA Group:', err);
+      alert("Une erreur est survenue lors de l'enregistrement : " + (err && err.message ? err.message : 'erreur inconnue') + ". Merci de réessayer.");
+      submitBtn.disabled = false;
+      submitBtn.textContent = 'Soumettre ma candidature';
+    }
+  });
+})();
+</script>
+</body>
+</html>
