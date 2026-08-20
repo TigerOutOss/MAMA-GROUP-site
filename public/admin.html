@@ -155,7 +155,7 @@ async function loadSubmissions(){
           </div>
         </div>
         <div class="grid">
-          <div><div class="k">Date de naissance</div><div class="v">${escapeHtml(r.dob||'—')}</div></div>
+          <div><div class="k">Date de naissance</div><div class="v">${formatDate(r.dob)}</div></div>
           <div><div class="k">Téléphone</div><div class="v">${escapeHtml(r.tel||'—')}</div></div>
           <div><div class="k">Ville</div><div class="v">${escapeHtml(r.ville||'—')}</div></div>
           <div><div class="k">E-mail</div><div class="v">${escapeHtml(r.email||'—')}</div></div>
@@ -174,6 +174,13 @@ async function loadSubmissions(){
   } catch(err){
     list.innerHTML = '<div class="loading">Erreur : ' + escapeHtml(err.message) + '</div>';
   }
+}
+
+function formatDate(val){
+  if(!val) return '—';
+  const d = new Date(val);
+  if(isNaN(d.getTime())) return escapeHtml(String(val));
+  return d.toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit', year: 'numeric', timeZone: 'UTC' });
 }
 
 function escapeHtml(str){
