@@ -47,6 +47,15 @@
   .sig-img{max-width:200px;border:1px solid var(--paper-line);border-radius:4px;margin-top:6px;background:#fff;}
   details summary{cursor:pointer;font-size:12.5px;color:var(--gold);font-weight:600;}
   .loading{text-align:center;padding:60px;color:var(--ink-soft);}
+  .print-btn{background:none;border:1px solid var(--paper-line);color:var(--ink-soft);font-weight:600;font-size:12px;padding:7px 14px;margin-left:auto;}
+  .print-btn:hover{border-color:var(--gold);color:var(--ink);}
+
+  @media print{
+    body *{visibility:hidden;}
+    .card.printing, .card.printing *{visibility:visible;}
+    .card.printing{position:absolute;top:0;left:0;width:100%;border:none;box-shadow:none;margin:0;padding:0;}
+    .print-btn{display:none;}
+  }
 </style>
 </head>
 <body>
@@ -146,13 +155,14 @@ async function loadSubmissions(){
     }
 
     list.innerHTML = records.map(r => `
-      <div class="card">
+      <div class="card" id="card-${r.id}">
         <div class="card-head">
           ${r.photo ? `<img class="avatar" src="${r.photo}">` : ''}
           <div>
             <div class="name">${escapeHtml(r.nom_complet || 'Sans nom')}</div>
             <div class="meta">${new Date(r.submitted_at).toLocaleString('fr-FR')} — Réf. #${r.id}</div>
           </div>
+          <button class="print-btn" onclick="imprimerFiche(${r.id})">🖨 Imprimer</button>
         </div>
         <div class="grid">
           <div><div class="k">Date de naissance</div><div class="v">${formatDate(r.dob)}</div></div>
@@ -181,6 +191,14 @@ function formatDate(val){
   const d = new Date(val);
   if(isNaN(d.getTime())) return escapeHtml(String(val));
   return d.toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit', year: 'numeric', timeZone: 'UTC' });
+}
+
+function imprimerFiche(id){
+  const card = document.getElementById('card-' + id);
+  if(!card) return;
+  card.classList.add('printing');
+  window.print();
+  card.classList.remove('printing');
 }
 
 function escapeHtml(str){
